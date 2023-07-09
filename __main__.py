@@ -1,5 +1,5 @@
 import asyncio
-from sentiments import get_opinions_for_ticker, get_sentiment_number, write_sentiment_to_db, print_sentiment, create_database
+from sentiments import get_opinions_for_ticker, get_sentiment_average, write_sentiment_to_db, print_sentiment, create_database
 from config import write_to_database
 
 # Create the database
@@ -13,7 +13,7 @@ ticker = input('Enter ticker: ')
 opinions = asyncio.run(get_opinions_for_ticker(ticker))
 
 # Process the opinions to get the sentiment
-num = get_sentiment_number(opinions)
+num = get_sentiment_average(opinions)
 
 # Write the sentiment to the database
 if write_to_database:

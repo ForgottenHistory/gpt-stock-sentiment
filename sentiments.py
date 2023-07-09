@@ -61,9 +61,10 @@ async def get_opinions_for_ticker(ticker):
 
     return opinions
 
-def get_sentiment_number(opinions):
+def get_sentiment_average(opinions):
 
     opinion_as_number = 0
+    num_opinions = 0
 
     # Mapping of opinions to their corresponding actions
     opinion_mapping = {
@@ -81,8 +82,13 @@ def get_sentiment_number(opinions):
             opinion = match.group()
             # Add the corresponding action to opinion_as_number
             opinion_as_number += opinion_mapping.get(opinion, 0)
+            num_opinions += 1
 
-    return opinion_as_number
+    # Calculate average if there are any opinions, else return 0
+    if num_opinions > 0:
+        return round(opinion_as_number / num_opinions, 3)
+    else:
+        return 0
 
 def get_sentiment(number, ticker):
 
