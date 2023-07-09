@@ -1,0 +1,4 @@
+openai
+requests
+asyncio
+newsapi-python
