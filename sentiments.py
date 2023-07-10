@@ -91,6 +91,10 @@ async def get_opinions_for_ticker(ticker, overridehours_back=False):
     # Get time for filename
     time = current_time.strftime("%Y-%m-%d_%H-%M-%S")
 
+    # No headlines found
+    if headlines == None:
+        return None
+    
     # Create a list of tasks for each headline
     tasks = [get_gpt_opinion(headline, ticker, time) for headline in headlines]
 
