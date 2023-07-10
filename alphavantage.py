@@ -1,7 +1,4 @@
 import requests
-import os
-import json
-
 from datetime import datetime, timedelta
 from config import alpha_vantage_api_key
 
@@ -25,10 +22,6 @@ async def get_headlines_for_ticker(ticker):
     if 'Information' in data:
         return []
 
-    # Save data to json file
-    #with open('data.json', 'w') as f:
-    #    json.dump(data, f)
-
     # Loop through all feed and get titles
     headlines = []
     for feed in data["feed"]:
@@ -36,3 +29,25 @@ async def get_headlines_for_ticker(ticker):
 
     # Return headlines
     return headlines
+
+def get_ticker_price(ticker):
+    # Create url for ticker
+    url = f'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={ticker}&apikey={api_key}'
+
+    # Send request and get data as json
+    r = requests.get(url)
+    data = r.json()
+
+    print(data)
+
+    # Check for invalid input
+    # {'Note': 'Thank you for using Alpha Vantage! Our standard API call frequency is 5 calls per minute and 500 calls per day. Please visit https://www.alphavantage.co/premium/ if you would like to target a higher API call frequency.'}
+    if 'Note' in data:
+        return 0
+
+    # Get the price
+    price = float(data["Global Quote"]["05. price"])
+
+    return price
+
+print(get_ticker_price('AAPL'))
