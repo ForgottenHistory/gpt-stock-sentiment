@@ -2,6 +2,7 @@
 import re
 import datetime
 import sqlite3
+import os 
 
 # Third party
 import asyncio
@@ -21,6 +22,10 @@ opinion_count = {
 }
 
 def create_database():
+    # Create dir if it doesn't exist
+    if not os.path.exists(databases_path):
+        os.makedirs(databases_path)
+
     conn = sqlite3.connect(f'{databases_path}/sentiments.db')  # Creates a connection to the SQLite database
     c = conn.cursor()  # Creates a cursor object
 
