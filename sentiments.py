@@ -118,6 +118,6 @@ def get_sentiment(number, ticker):
 def print_sentiment(opinion_as_number, ticker):
 
     # Print the opinion with the sentiment
-    print(f"Total value of opinions: {opinion_as_number}")
+    print(f"Average value of opinions: {opinion_as_number}")
     print(f"YES: {opinion_count['YES']} | NO: {opinion_count['NO']} | UNKNOWN: {opinion_count['UNKNOWN']}")
     print(get_sentiment(opinion_as_number, ticker))
