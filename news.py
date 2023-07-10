@@ -1,7 +1,7 @@
 import sqlite3
 import datetime
 import asyncio
-from config import newsapi_api_key, write_to_database, newsapi_language, newsapi_sort_by, from_days_ago
+from config import newsapi_api_key, write_to_database, newsapi_language, newsapi_sort_by, from_days_ago, databases_path
 from newsapi import NewsApiClient
 
 newsapi = NewsApiClient(api_key=newsapi_api_key)
@@ -29,7 +29,7 @@ async def get_headlines_for_ticker(ticker):
 
 def write_db(headlines, ticker):
     # Connect to the database
-    conn = sqlite3.connect('headlines.db')
+    conn = sqlite3.connect(f'{databases_path}/headlines.db')
     c = conn.cursor()
 
     # Create the table if it doesn't exist

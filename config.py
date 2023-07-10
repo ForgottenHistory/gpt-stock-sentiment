@@ -24,3 +24,4 @@ alpha_vantage_api_key = os.getenv('ALPHAVANTAGE_API_KEY')
 print_opinions = True # Will print opinion as they are generated
 write_to_database = True # Will write headlines, opinions and sentiment to databases
 debug_mode = False # Will replace headlines with debug headlines to avoid API calls
+databases_path = 'databases' # Path to databases folder

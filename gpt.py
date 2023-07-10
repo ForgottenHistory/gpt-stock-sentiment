@@ -2,7 +2,7 @@ import openai
 import datetime
 import os
 import sqlite3
-from config import openai_api_key, openai_model, print_opinions, write_to_database
+from config import openai_api_key, openai_model, print_opinions, write_to_database, databases_path
 
 # Set up OpenAI API key
 openai.api_key = openai_api_key
@@ -54,7 +54,7 @@ async def get_gpt_opinion(headline,ticker,time):
 
 def write_db(response, ticker, time, headline):
     # Connect to the database
-    conn = sqlite3.connect('opinions.db')
+    conn = sqlite3.connect(f'{databases_path}/opinions.db')
     c = conn.cursor()
 
     # Create the table if it doesn't exist

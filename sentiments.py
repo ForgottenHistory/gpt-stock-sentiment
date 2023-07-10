@@ -11,7 +11,7 @@ import news
 import alphavantage
 
 from gpt import get_gpt_opinion
-from config import debug_mode, api_for_news
+from config import debug_mode, api_for_news, databases_path
 
 # Dictionary for YES|NO|UNKNOWN answers
 opinion_count = {
@@ -21,7 +21,7 @@ opinion_count = {
 }
 
 def create_database():
-    conn = sqlite3.connect('sentiments.db')  # Creates a connection to the SQLite database
+    conn = sqlite3.connect(f'{databases_path}/sentiments.db')  # Creates a connection to the SQLite database
     c = conn.cursor()  # Creates a cursor object
 
     # Creates the table if it doesn't exist
@@ -32,7 +32,7 @@ def create_database():
 
 def write_sentiment_to_db(ticker, sentiment):
     # Connect to the database
-    conn = sqlite3.connect('sentiments.db')
+    conn = sqlite3.connect(f'{databases_path}/sentiments.db')
     c = conn.cursor()
 
     # Create the table if it doesn't exist
