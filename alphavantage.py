@@ -22,6 +22,10 @@ async def get_headlines_for_ticker(ticker, hours_back=24):
     if 'Information' in data:
         return []
 
+    # Check for rate limit
+    if 'Note' in data:
+        return []
+    
     # Loop through all feed and get titles
     headlines = []
     for feed in data["feed"]:
@@ -30,7 +34,7 @@ async def get_headlines_for_ticker(ticker, hours_back=24):
     # Return headlines
     return headlines
 
-def get_ticker_price(ticker):
+async def get_ticker_price(ticker):
     # Create url for ticker
     url = f'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={ticker}&apikey={api_key}'
 
@@ -49,5 +53,3 @@ def get_ticker_price(ticker):
     price = float(data["Global Quote"]["05. price"])
 
     return price
-
-print(get_ticker_price('AAPL'))

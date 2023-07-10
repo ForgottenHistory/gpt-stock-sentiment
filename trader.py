@@ -1,6 +1,8 @@
 import sqlite3
 import datetime
 from datetime import datetime
+from config import databases_path
+from alphavantage import get_ticker_price
 
 # Constants for market hours
 MARKET_OPEN_HOUR = 6
@@ -31,18 +33,51 @@ def get_current_sentiment(ticker):
     # Return the average sentiment score
     return sum(score for score, in sentiment_scores) / len(sentiment_scores) if sentiment_scores else 0
 
-def make_trading_decision(ticker):
+async def make_trading_decision(ticker):
     # Get the current sentiment score
     sentiment_score = get_current_sentiment(ticker)
 
     # Make trading decision based on the sentiment score
     if sentiment_score > 0:
-        print(f"Buy {ticker}")
+        decision = 'BUY'
     elif sentiment_score < 0:
-        print(f"Short {ticker}")
+        decision = 'SELL'
     else:
-        print(f"Hold {ticker}")
+        decision = 'HOLD'
+    
+    # Record the trading decision
+    await record_trade_decision(ticker, decision)
+
+    # Print the trading decision
+    print(f'Trading decision for {ticker}: {decision}')
+
+async def record_trade_decision(ticker, decision):
+    # Connect to the database
+    conn = sqlite3.connect(f'{databases_path}/trading_decisions.db')
+    c = conn.cursor()
+
+    # Create the table if it doesn't exist
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS trading_decisions
+        (timestamp text, ticker text, decision text, price real)
+    ''')
+
+    # Get the current timestamp in YYYY-MM-DD HH:MM:SS format
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # Get the current price of the ticker
+    price = await get_ticker_price(ticker)
+
+    # Record the trading decision
+    c.execute('''
+        INSERT INTO trading_decisions
+        VALUES (?, ?, ?, ?)
+    ''', (timestamp, ticker, decision, price))
+
+    # Commit the transaction and close the connection
+    conn.commit()
+    conn.close()
 
 # Example usage
-ticker = input('Enter ticker: ')
-make_trading_decision(ticker)
+#ticker = input('Enter ticker: ')
+#make_trading_decision(ticker)
