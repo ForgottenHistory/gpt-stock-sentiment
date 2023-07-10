@@ -10,7 +10,7 @@ if write_to_database:
 ticker = input('Enter ticker: ')
 
 # Run the async function and get the result
-opinions = asyncio.run(get_opinions_for_ticker(ticker))
+opinions = asyncio.run(get_opinions_for_ticker(ticker, overridehours_back=True))
 
 # Process the opinions to get the sentiment
 num = get_sentiment_average(opinions)

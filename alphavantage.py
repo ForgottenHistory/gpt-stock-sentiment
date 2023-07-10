@@ -4,10 +4,10 @@ from config import alpha_vantage_api_key
 
 api_key = alpha_vantage_api_key
 
-async def get_headlines_for_ticker(ticker):
+async def get_headlines_for_ticker(ticker, hours_back=24):
 
     # Get date and time in format YYYYMMDDTHHMM (e.g. 20210909T0000)
-    date = datetime.now() - timedelta(days=1)
+    date = datetime.now() - timedelta(hours=hours_back)
     date = date.strftime('%Y%m%dT0000')
 
     # Create url for ticker

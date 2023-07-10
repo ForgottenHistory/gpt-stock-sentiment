@@ -41,7 +41,7 @@ def write_sentiment_to_db(ticker, sentiment):
 
     # Get the current date and time in YYYY-MM-DD HH:MM:SS format
     date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    
+
     # Insert the sentiment into the database
     c.execute("INSERT INTO sentiments VALUES (?, ?, ?)", (date, ticker, sentiment))
 
@@ -49,21 +49,42 @@ def write_sentiment_to_db(ticker, sentiment):
     conn.commit()
     conn.close()
 
-async def get_opinions_for_ticker(ticker):
+def get_hours_back():
+    current_time = datetime.datetime.now()
 
-    # Debug
+    # Determine the number of hours to look back based on the current time
+    if current_time.hour == 5:
+        hours_back = 13  # Fetch news from 4:00 PM of the previous day
+    elif current_time.hour == 6:
+        hours_back = 1  # Fetch news from the last hour
+    else:
+        hours_back = 1  # Fetch news from the last hour
+    return hours_back
+
+async def get_headlines(ticker, overridehours_back=False):
+    # Get headlines for ticker
     if debug_mode:
         headlines = ["Assessing Cardano’s chances of a bounce to $0.3", "Miners Send $1.67 Billion in Bitcoin to Binance"]
         ticker = 'BTC'
     else:
         if api_for_news == 'newsapi':
-            # Get headlines for ticker
             headlines = await news.get_headlines_for_ticker(ticker)
         elif api_for_news == 'alphavantage':
-            headlines = await alphavantage.get_headlines_for_ticker(ticker)
+            if overridehours_back:
+                headlines = await alphavantage.get_headlines_for_ticker(ticker, 24)
+            else:
+                headlines = await alphavantage.get_headlines_for_ticker(ticker, get_hours_back())
 
-    # Get time
-    time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+async def get_opinions_for_ticker(ticker, overridehours_back=False):
+
+    # Get current time
+    current_time = datetime.datetime.now()
+
+    # Get headlines for ticker
+    headlines = await get_headlines(ticker, overridehours_back)
+
+    # Get time for filename
+    time = current_time.strftime("%Y-%m-%d_%H-%M-%S")
 
     # Create a list of tasks for each headline
     tasks = [get_gpt_opinion(headline, ticker, time) for headline in headlines]
