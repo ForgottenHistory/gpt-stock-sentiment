@@ -39,9 +39,9 @@ def write_sentiment_to_db(ticker, sentiment):
     c.execute('''CREATE TABLE IF NOT EXISTS sentiments
                  (date text, ticker text, sentiment integer)''')
 
-    # Get the current date
-    date = datetime.datetime.now().strftime("%Y-%m-%d")
-
+    # Get the current date and time in YYYY-MM-DD HH:MM:SS format
+    date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    
     # Insert the sentiment into the database
     c.execute("INSERT INTO sentiments VALUES (?, ?, ?)", (date, ticker, sentiment))
 
@@ -62,7 +62,7 @@ async def get_opinions_for_ticker(ticker):
         elif api_for_news == 'alphavantage':
             headlines = await alphavantage.get_headlines_for_ticker(ticker)
 
-    # Get time for filename
+    # Get time
     time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     # Create a list of tasks for each headline
