@@ -7,9 +7,18 @@ import sqlite3
 import asyncio
 
 # Local
-from news import get_headlines_for_ticker
+import news
+import alphavantage
+
 from gpt import get_gpt_opinion
-from config import debug_mode
+from config import debug_mode, api_for_news
+
+# Dictionary for YES|NO|UNKNOWN answers
+opinion_count = {
+    'YES': 0,
+    'NO': 0,
+    'UNKNOWN': 0
+}
 
 def create_database():
     conn = sqlite3.connect('sentiments.db')  # Creates a connection to the SQLite database
@@ -47,8 +56,11 @@ async def get_opinions_for_ticker(ticker):
         headlines = ["Assessing Cardano’s chances of a bounce to $0.3", "Miners Send $1.67 Billion in Bitcoin to Binance"]
         ticker = 'BTC'
     else:
-        # Get headlines for ticker
-        headlines = await get_headlines_for_ticker(ticker)
+        if api_for_news == 'newsapi':
+            # Get headlines for ticker
+            headlines = await news.get_headlines_for_ticker(ticker)
+        elif api_for_news == 'alphavantage':
+            headlines = await alphavantage.get_headlines_for_ticker(ticker)
 
     # Get time for filename
     time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -84,6 +96,9 @@ def get_sentiment_average(opinions):
             opinion_as_number += opinion_mapping.get(opinion, 0)
             num_opinions += 1
 
+            # Increment the opinion count
+            opinion_count[opinion] += 1
+
     # Calculate average if there are any opinions, else return 0
     if num_opinions > 0:
         return round(opinion_as_number / num_opinions, 3)
@@ -93,9 +108,9 @@ def get_sentiment_average(opinions):
 def get_sentiment(number, ticker):
 
     # Return a string based on the value of number
-    if number > 0:
+    if number > 0.1:
         return f'Overall sentiment for {ticker} is positive.'
-    elif number < 0:
+    elif number < -0.1:
         return f'Overall sentiment for {ticker} is negative.'
     else:
         return f'Overall sentiment for {ticker} is neutral.'
@@ -104,4 +119,5 @@ def print_sentiment(opinion_as_number, ticker):
 
     # Print the opinion with the sentiment
     print(f"Total value of opinions: {opinion_as_number}")
+    print(f"YES: {opinion_count['YES']} | NO: {opinion_count['NO']} | UNKNOWN: {opinion_count['UNKNOWN']}")
     print(get_sentiment(opinion_as_number, ticker))

@@ -154,3 +154,4 @@ cython_debug/
 sentiments.db
 opinions.db
 headlines.db
+data.json

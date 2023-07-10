@@ -1,5 +1,8 @@
 import os
 
+# Important
+api_for_news = "alphavantage" # "newsapi" or "alphavantage"
+
 # OpenAI API
 # https://platform.openai.com
 openai_api_key = os.getenv('OPENAI_API_KEY')
@@ -12,6 +15,10 @@ newsapi_api_key = os.getenv('NEWS_API_KEY')
 newsapi_sort_by = 'relevancy'
 newsapi_language = 'en'
 from_days_ago = 1 # Number of days ago to get headlines from. Higher values need a paid plan
+
+# Alpha Vantage
+# https://www.alphavantage.co
+alpha_vantage_api_key = os.getenv('ALPHAVANTAGE_API_KEY')
 
 # Miscellanous
 print_opinions = True # Will print opinion as they are generated
